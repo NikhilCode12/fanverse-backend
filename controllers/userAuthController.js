@@ -1,4 +1,4 @@
-import UserAuth from "../models/UserAuth";
+import UserAuth from "../models/UserAuth.js";
 
 // register with email
 export const registerWithEmail = async (req, res) => {

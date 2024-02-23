@@ -1,4 +1,4 @@
-import CricketPlayer from "../models/CricketPlayer";
+import CricketPlayer from "../models/CricketPlayer.js";
 
 // creating a new player
 export const createPlayer = async (req, res) => {

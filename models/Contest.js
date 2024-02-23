@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import UserAccount from "./UserAccount";
+import UserAccount from "./UserAccount.js";
 
 const contestSchema = new mongoose.Schema({
   type: { type: String },

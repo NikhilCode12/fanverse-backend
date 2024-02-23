@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import Match from "./Match";
-import Contest from "./Contest";
-import UserAuth from "./UserAuth";
-import Team from "./Team";
+import Match from "./Match.js";
+import Contest from "./Contest.js";
+import UserAuth from "./UserAuth.js";
+import Team from "./Team.js";
 
 const UserAccountSchema = new mongoose.Schema({
   userId: {

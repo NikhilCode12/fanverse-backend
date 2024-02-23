@@ -1,4 +1,4 @@
-import Match from "../models/Match";
+import Match from "../models/Match.js";
 
 // creating a new match
 export const createMatch = async (req, res) => {

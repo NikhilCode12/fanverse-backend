@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import UserAccount from "./UserAccount";
-import Match from "./Match";
+import UserAccount from "./UserAccount.js";
+import Match from "./Match.js";
 
 const teamSchema = new mongoose.Schema({
   name: { type: String, required: true },

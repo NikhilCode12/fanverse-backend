@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import UserAuth from "./UserAuth";
+import UserAuth from "./UserAuth.js";
 
 const userWalletSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "UserAuth" },

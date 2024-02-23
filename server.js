@@ -3,12 +3,12 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/authRoutes";
-import userAccountRoutes from "./routes/userAccountRoutes";
-import userWalletRoutes from "./routes/userWalletRoutes";
-import matchRoutes from "./routes/matchRoutes";
-import contestRoutes from "./routes/contestRoutes";
-import playerRoutes from "./routes/playerRoutes";
+import authRoutes from "./routes/authRoutes.js";
+import userAccountRoutes from "./routes/userAccountRoutes.js";
+import userWalletRoutes from "./routes/userWalletRoutes.js";
+import matchRoutes from "./routes/matchRoutes.js";
+import contestRoutes from "./routes/contestRoutes.js";
+import playerRoutes from "./routes/playerRoutes.js";
 
 // express app
 const app = express();

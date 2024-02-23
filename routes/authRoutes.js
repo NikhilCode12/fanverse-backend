@@ -4,7 +4,7 @@ import {
   registerWithMobile,
   registerWithGoogle,
   registerWithFacebook,
-} from "../controllers/userAuthController";
+} from "../controllers/userAuthController.js";
 
 const router = express.Router();
 

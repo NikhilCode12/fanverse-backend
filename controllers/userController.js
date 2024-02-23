@@ -1,4 +1,4 @@
-import UserAccount from "../models/UserAccount";
+import UserAccount from "../models/UserAccount.js";
 
 // creating a new user
 export const createUser = async (req, res) => {
