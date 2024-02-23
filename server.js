@@ -30,7 +30,9 @@ app.use("/api/wallet", userWalletRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/contest", contestRoutes);
 app.use("/api/player", playerRoutes);
-
+app.get('/testbyaryan',(req,resp)=>{
+  resp.send("ARYAN IS TEST IS OK");
+});
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the server");
