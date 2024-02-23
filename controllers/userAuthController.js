@@ -1,5 +1,6 @@
 import UserAuth from "../models/UserAuth.js";
-
+import UserGoogleAuth from "../models/UserGoogleAuth.js";
+import UserFacebookAuth from "../models/UserFacebookAuth.js";
 // register with email
 export const registerWithEmail = async (req, res) => {
   try {
@@ -34,12 +35,12 @@ export const registerWithMobile = async (req, res) => {
 // register with google
 export const registerWithGoogle = async (req, res) => {
   try {
-    const { googleId } = req.body;
-    const user = await UserAuth.findOne({ googleId });
+    const { googleId} = req.body;
+    const user = await UserGoogleAuth.findOne({ googleId });
     if (user)
-      return res.status(400).json({ error: "Google account already exists" });
-
-    const newUser = new UserAuth({ googleId });
+      return res.status(201).json(user);
+    
+    const newUser = new UserGoogleAuth(req.body);
     await newUser.save();
     return res.status(201).json(newUser);
   } catch (err) {
@@ -50,11 +51,11 @@ export const registerWithGoogle = async (req, res) => {
 // register with facebook
 export const registerWithFacebook = async (req, res) => {
   try {
-    const { facebookId } = req.body;
-    const user = await UserAuth.findOne({ facebookId });
+    const { FacebookId } = req.body;
+    const user = await UserFacebookAuth.findOne({ FacebookId });
     if (user)
-      return res.status(400).json({ error: "Facebook account already exists" });
-    const newUser = new UserAuth({ facebookId });
+      return res.status(201).json(req.body);
+    const newUser = new UserFacebookAuth(req.body);
     await newUser.save();
     return res.status(201).json(newUser);
   } catch (err) {
