@@ -8,6 +8,8 @@ import {
   deleteUserById,
 } from "../controllers/userController.js";
 
+const router = express.Router();
+
 router.post("/create", createUser);
 router.get("/", getUserByToken);
 router.get("/all", getAllUsers);

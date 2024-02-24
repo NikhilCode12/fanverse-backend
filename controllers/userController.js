@@ -1,20 +1,40 @@
 import UserAccount from "../models/UserAccount.js";
 import jwt from "jsonwebtoken";
-import { promisify } from 'util';
 
-const verifyAsync = promisify(jwt.verify);
-const secretKey = 'eiy28whd78t';
+const secretKey = "eiy28whd78t";
+
 // creating a new user
 export const createUser = async (req, res) => {
   try {
-    const user = new UserAccount(req.body);
-    await user.save();
-    const { primaryInfo} = req.body;
-      const mobile = primaryInfo.mobile;
-       const email = primaryInfo.email;
-      const token = jwt.sign({email,mobile }, secretKey, { expiresIn: '1h' }); 
-      res.status(200).json({ user, token });
-    // res.status(200).json("hh");
+    const { username, primaryInfo } = req.body;
+    const { email, mobile } = primaryInfo;
+
+    const existingUser = await UserAccount.findOne({ email, mobile });
+    if (existingUser)
+      return res.status(400).json({ message: "User already exists" });
+
+    const newUser = new UserAccount({
+      username,
+      primaryInfo: {
+        email,
+        mobile,
+      },
+    });
+
+    await newUser.save();
+
+    // generating token
+    const token = jwt.sign(
+      { userId: newUser._id, email: newUser.primaryInfo.email },
+      secretKey,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    return res
+      .status(201)
+      .json({ msg: "User created successfully", newUser, token });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -23,22 +43,15 @@ export const createUser = async (req, res) => {
 // getting user by token
 export const getUserByToken = async (req, res) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization.split(" ")[1];
     if (!token) {
-      return res.status(401).json({ error: 'Unauthorized: Token is missing' });
+      return res.status(401).json({ error: "Unauthorized: Token is missing!" });
     }
 
-    const decoded = await verifyAsync(token.replace('Bearer ', ''), secretKey);
-    const {mobile,email } = decoded;
-    const primaryInfo = {
-      mobile: mobile,
-      email: email
-    };
+    const decodedToken = jwt.verify(token, secretKey);
 
-    const user = await UserAccount.findOne(primaryInfo);
-    // console.log(primaryinfo)
-
-    if (!user) return res.status(404).json({ message: "User not found" ,primaryInfo});
+    const user = await UserAccount.findById(decodedToken.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     return res.status(200).json(user);
   } catch (err) {
