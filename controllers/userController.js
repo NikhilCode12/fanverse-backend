@@ -1,13 +1,20 @@
 import UserAccount from "../models/UserAccount.js";
 import jwt from "jsonwebtoken";
+import { promisify } from 'util';
 
+const verifyAsync = promisify(jwt.verify);
+const secretKey = 'eiy28whd78t';
 // creating a new user
 export const createUser = async (req, res) => {
   try {
     const user = new UserAccount(req.body);
     await user.save();
-
-    res.status(200).json(user);
+    const { primaryInfo} = req.body;
+      const mobile = primaryInfo.mobile;
+       const email = primaryInfo.email;
+      const token = jwt.sign({email,mobile }, secretKey, { expiresIn: '1h' }); 
+      res.status(200).json({ user, token });
+    // res.status(200).json("hh");
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -16,8 +23,23 @@ export const createUser = async (req, res) => {
 // getting user by token
 export const getUserByToken = async (req, res) => {
   try {
-    const user = await UserAccount.findOne({ authToken: req.params.token });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized: Token is missing' });
+    }
+
+    const decoded = await verifyAsync(token.replace('Bearer ', ''), secretKey);
+    const {mobile,email } = decoded;
+    const primaryInfo = {
+      mobile: mobile,
+      email: email
+    };
+
+    const user = await UserAccount.findOne(primaryInfo);
+    // console.log(primaryinfo)
+
+    if (!user) return res.status(404).json({ message: "User not found" ,primaryInfo});
+
     return res.status(200).json(user);
   } catch (err) {
     return res.status(500).json({ error: err.message });
