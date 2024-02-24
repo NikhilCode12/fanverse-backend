@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 import Match from "./Match.js";
 import Contest from "./Contest.js";
-import UserAuth from "./UserAuth.js";
 import Team from "./Team.js";
 
 const UserAccountSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "UserAuth",
+  },
+  username: {
+    type: String,
+    required: true,
   },
   contestsWon: {
     type: Number,
