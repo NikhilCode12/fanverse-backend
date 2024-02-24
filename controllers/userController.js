@@ -13,19 +13,17 @@ export const createUser = async (req, res) => {
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
-    const newUser = new UserAccount({
-      username,
-      primaryInfo: {
-        email,
-        mobile,
-      },
-    });
+    const newUser = new UserAccount(req.body);
 
     await newUser.save();
 
     // generating token
     const token = jwt.sign(
-      { userId: newUser._id, email: newUser.primaryInfo.email },
+      {
+        userId: newUser._id,
+        email: newUser.primaryInfo.email,
+        mobile: newUser.primaryInfo.mobile,
+      },
       secretKey,
       {
         expiresIn: "1d",
