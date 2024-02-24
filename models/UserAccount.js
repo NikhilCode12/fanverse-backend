@@ -19,11 +19,13 @@ const UserAccountSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  matches: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Match",
-    default: null,
-  }],
+  matches: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Match",
+      default: null,
+    },
+  ],
   series: {
     type: Number,
     default: 0,
@@ -45,10 +47,14 @@ const UserAccountSchema = new mongoose.Schema({
     email: { type: String, unique: true },
   },
   basicInfo: {
-    dob: { type: String },
-    gender: { type: String },
-    country: { type: String },
-    state: { type: String },
+    dob: { type: String, default: "DD/MM/YY" },
+    gender: { type: String, default: "Unknown" },
+    country: { type: String, default: "India" },
+    state: { type: String, default: "Unknown" },
+  },
+  points: {
+    type: Number,
+    default: 0,
   },
   authToken: {
     type: String,
