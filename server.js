@@ -30,7 +30,8 @@ const twilioClient = twilio(
 
 // Initialize Nodemailer
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: process.env.EMAIL_HOST,
+  port: 587,
   auth: {
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,
@@ -107,7 +108,14 @@ app.post("/api/send-email-otp", (req, res) => {
     from: process.env.EMAIL,
     to: email,
     subject: "Fanverse OTP Verification Code",
-    text: `Your OTP for verification is: ${otp}`,
+    html: `
+    <p>Dear User,</p>
+    <p>Your OTP for verification is: <strong>${otp}</strong></p>
+    <p>Please use this code to verify your account.</p>
+    <br>
+    <p>Thank you,</p>
+    <p>Support Team, Fanverse</p>
+    `,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
