@@ -2,6 +2,7 @@ import express from "express";
 import {
   createUser,
   getUserById,
+  getUserByToken,
   getAllUsers,
   updateUserById,
   deleteUserById,
@@ -10,6 +11,7 @@ import {
 const router = express.Router();
 
 router.post("/create", createUser);
+router.get("/:token", getUserByToken);
 router.get("/all", getAllUsers);
 router.get("/:id", getUserById);
 router.put("/:id", updateUserById);
