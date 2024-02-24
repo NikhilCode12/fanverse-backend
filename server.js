@@ -91,7 +91,7 @@ app.post("/api/send-sms-otp", async (req, res) => {
         })
         .then((message) => {
           console.log("SMS sent", message.sid);
-          res.json({ msg: "OTP sent successfully" });
+          res.json({ msg: "OTP sent successfully", otp });
         })
         .catch((error) => {
           console.error("Error sending SMS:", error);
@@ -106,15 +106,16 @@ app.post("/api/send-sms-otp", async (req, res) => {
 });
 
 // Send OTP via Email
-app.post("/api/send-email-otp", (req, res) => {
-  const { email } = req.body;
-  const otp = generateOTP();
+app.post("/api/send-email-otp", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const otp = generateOTP();
 
-  const mailOptions = {
-    from: process.env.EMAIL,
-    to: email,
-    subject: "Fanverse OTP Verification Code",
-    html: `
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Fanverse OTP Verification Code",
+      html: `
     <p>Dear User,</p>
     <p>Your OTP for verification is: <strong>${otp}</strong></p>
     <p>Please use this code to verify your account.</p>
@@ -122,17 +123,20 @@ app.post("/api/send-email-otp", (req, res) => {
     <p>Thank you,</p>
     <p>Support Team, Fanverse</p>
     `,
-  };
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log("Error sending email", error);
-      res.status(500).json({ error: "Failed to send OTP via email" });
-    } else {
-      console.log("Email sent: " + info.response);
-      res.json({ msg: "OTP sent successfully" });
-    }
-  });
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email", error);
+        res.status(500).json({ error: "Failed to send OTP via email" });
+      } else {
+        console.log("Email sent: " + info.response);
+        res.json({ msg: "OTP sent successfully", otp });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Server
