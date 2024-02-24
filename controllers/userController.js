@@ -4,27 +4,10 @@ import jwt from "jsonwebtoken";
 // creating a new user
 export const createUser = async (req, res) => {
   try {
-    const { username, primaryInfo } = req.body;
-
-    // generate token for the user authorization
-    const userToken = jwt.sign(
-      {
-        id: username,
-        email: primaryInfo.email,
-        phoneNum: primaryInfo.phoneNum,
-      },
-      "fanverseUserCreationSecret@%$#^&*!@#Token"
-    );
-
-    const user = await UserAccount.create({
-      username,
-      primaryInfo,
-      authToken: userToken,
-    });
-
+    const user = new UserAccount(req.body);
     await user.save();
 
-    res.status(200).json(user, userToken);
+    res.status(200).json(user);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

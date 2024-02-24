@@ -41,8 +41,8 @@ const UserAccountSchema = new mongoose.Schema({
     },
   ],
   primaryInfo: {
-    mobile: { type: String },
-    email: { type: String },
+    mobile: { type: String, unique: true },
+    email: { type: String, unique: true },
   },
   basicInfo: {
     dob: { type: Date },
