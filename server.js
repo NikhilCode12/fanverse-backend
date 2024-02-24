@@ -119,9 +119,9 @@ app.post("/api/send-email-otp", async (req, res) => {
         <div style="border-bottom:1px solid #eee">
           <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Fannverse: Official Fantasy Sports</a>
         </div>
-        <p style="font-size:1.1em">Hi,</p>
+        <p style="font-size:1.1em">Hello User,</p>
         <p>Welcome onboard, .<br>Use the following OTP to complete your Sign Up procedure. OTP is valid only for 5 minutes.</p>
-        <h2 style="background: #000;margin: 0 auto;width: max-content;padding: 0 20px;color: #fff;border-radius: 25px; letter-spacing: 5px; font-size: 1.5em; color: skyblue;">123</h2>
+        <h2 style="background: #000;margin: 0 auto;width: max-content;padding: 0 20px;color: #fff;border-radius: 25px; letter-spacing: 5px; font-size: 1.5em; color: skyblue;">${otp}</h2>
         <p style="font-size:0.9em;">Regards,<br />Fannverse Founding Team</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
