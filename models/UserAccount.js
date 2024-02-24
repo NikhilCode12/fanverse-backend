@@ -22,6 +22,11 @@ const UserAccountSchema = new mongoose.Schema({
   matches: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Match",
+    default: null,
+  },
+  series: {
+    type: Number,
+    default: 0,
   },
   contests: [
     {
@@ -44,6 +49,9 @@ const UserAccountSchema = new mongoose.Schema({
     gender: { type: String },
     country: { type: String },
     state: { type: String },
+  },
+  authToken: {
+    type: String,
   },
 });
 

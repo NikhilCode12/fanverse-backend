@@ -1,11 +1,41 @@
 import UserAccount from "../models/UserAccount.js";
+import jwt from "jsonwebtoken";
 
 // creating a new user
 export const createUser = async (req, res) => {
   try {
-    const user = await UserAccount.create(req.body);
+    const { username, primaryInfo } = req.body;
+
+    // generate token for the user authorization
+    const userToken = jwt.sign(
+      {
+        id: username,
+        email: primaryInfo.email,
+        phoneNum: primaryInfo.phoneNum,
+      },
+      "fanverseUserCreationSecret@%$#^&*!@#Token"
+    );
+
+    const user = await UserAccount.create({
+      username,
+      primaryInfo,
+      authToken: userToken,
+    });
+
     await user.save();
-    return res.status(201).json(user);
+
+    return res.status(201).json(user, userToken);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+// getting user by token
+export const getUserByToken = async (req, res) => {
+  try {
+    const user = await UserAccount.findOne({ authToken: req.params.token });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    return res.status(200).json(user);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
