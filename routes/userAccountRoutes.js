@@ -8,10 +8,8 @@ import {
   deleteUserById,
 } from "../controllers/userController.js";
 
-const router = express.Router();
-
 router.post("/create", createUser);
-router.get("/:token", getUserByToken);
+router.get("/", getUserByToken);
 router.get("/all", getAllUsers);
 router.get("/:id", getUserById);
 router.put("/:id", updateUserById);
