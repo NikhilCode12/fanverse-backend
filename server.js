@@ -11,6 +11,7 @@ import userWalletRoutes from "./routes/userWalletRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
 import contestRoutes from "./routes/contestRoutes.js";
 import playerRoutes from "./routes/playerRoutes.js";
+import UserAccount from "./models/UserAccount.js";
 
 // express app
 const app = express();
@@ -72,24 +73,35 @@ const generateOTP = () => {
 };
 
 // Send OTP via SMS
-app.post("/api/send-sms-otp", (req, res) => {
-  const { mobileNumber } = req.body;
-  const otp = generateOTP();
+app.post("/api/send-sms-otp", async (req, res) => {
+  try {
+    const { mobileNumber } = req.body;
 
-  twilioClient.messages
-    .create({
-      body: `Your OTP for verification at fanverse is ${otp}`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: mobileNumber,
-    })
-    .then((message) => {
-      console.log("SMS sent", message.sid);
-      res.json({ msg: "OTP sent successfully" });
-    })
-    .catch((error) => {
-      console.error("Error sending SMS:", error);
-      res.status(500).json({ error: "Failed to send OTP via SMS" });
-    });
+    const user = await UserAccount.findOne({ mobileNumber });
+
+    if (user) {
+      const otp = generateOTP();
+
+      twilioClient.messages
+        .create({
+          body: `Your OTP for verification at fanverse is ${otp}`,
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: mobileNumber,
+        })
+        .then((message) => {
+          console.log("SMS sent", message.sid);
+          res.json({ msg: "OTP sent successfully" });
+        })
+        .catch((error) => {
+          console.error("Error sending SMS:", error);
+          res.status(500).json({ error: "Failed to send OTP via SMS" });
+        });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Send OTP via Email
