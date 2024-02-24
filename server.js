@@ -30,11 +30,13 @@ const twilioClient = twilio(
 
 // Initialize Nodemailer
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
+  service: "gmail",
+  host: "smtp.gmail.com",
   port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD,
+    user: process.env.GMAIL,
+    pass: process.env.GMAIL_PASSWORD,
   },
 });
 
@@ -78,28 +80,22 @@ app.post("/api/send-sms-otp", async (req, res) => {
   try {
     const { mobileNumber } = req.body;
 
-    const user = await UserAccount.findOne({ mobileNumber });
+    const otp = generateOTP();
 
-    if (user) {
-      const otp = generateOTP();
-
-      twilioClient.messages
-        .create({
-          body: `Your OTP for verification at fanverse is ${otp}`,
-          from: process.env.TWILIO_PHONE_NUMBER,
-          to: mobileNumber,
-        })
-        .then((message) => {
-          console.log("SMS sent", message.sid);
-          res.json({ msg: "OTP sent successfully", otp });
-        })
-        .catch((error) => {
-          console.error("Error sending SMS:", error);
-          res.status(500).json({ error: "Failed to send OTP via SMS" });
-        });
-    } else {
-      res.status(404).json({ error: "User not found" });
-    }
+    twilioClient.messages
+      .create({
+        body: `Your OTP for verification at fanverse is ${otp}`,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: mobileNumber,
+      })
+      .then((message) => {
+        console.log("SMS sent", message.sid);
+        res.json({ msg: "OTP sent successfully", otp });
+      })
+      .catch((error) => {
+        console.error("Error sending SMS:", error);
+        res.status(500).json({ error: "Failed to send OTP via SMS" });
+      });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -112,7 +108,10 @@ app.post("/api/send-email-otp", async (req, res) => {
     const otp = generateOTP();
 
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: {
+        name: "Fanverse",
+        address: process.env.GMAIL,
+      },
       to: email,
       subject: "Fanverse OTP Verification Code",
       html: `
@@ -125,7 +124,7 @@ app.post("/api/send-email-otp", async (req, res) => {
     `,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
+    await transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log("Error sending email", error);
         res.status(500).json({ error: "Failed to send OTP via email" });
