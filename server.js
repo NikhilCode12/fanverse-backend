@@ -79,23 +79,22 @@ const generateOTP = () => {
 app.post("/api/send-sms-otp", async (req, res) => {
   try {
     const { mobileNumber } = req.body;
+      const otp = generateOTP();
 
-    const otp = generateOTP();
-
-    twilioClient.messages
-      .create({
-        body: `Your OTP for verification at fanverse is ${otp}`,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: mobileNumber,
-      })
-      .then((message) => {
-        console.log("SMS sent", message.sid);
-        res.json({ msg: "OTP sent successfully", otp });
-      })
-      .catch((error) => {
-        console.error("Error sending SMS:", error);
-        res.status(500).json({ error: "Failed to send OTP via SMS" });
-      });
+      twilioClient.messages
+        .create({
+          body: `Your OTP for verification at fanverse is ${otp}`,
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: mobileNumber,
+        })
+        .then((message) => {
+          console.log("SMS sent", message.sid);
+          res.json({ msg: "OTP sent successfully", otp });
+        })
+        .catch((error) => {
+          console.error("Error sending SMS:", error);
+          res.status(500).json({ error: "Failed to send OTP via SMS" });
+        });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
