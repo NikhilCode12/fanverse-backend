@@ -76,10 +76,7 @@ const generateOTP = () => {
 app.post("/api/send-sms-otp", async (req, res) => {
   try {
     const { mobileNumber } = req.body;
-
-    const user = await UserAccount.findOne({ mobileNumber });
-
-    if (user) {
+    
       const otp = generateOTP();
 
       twilioClient.messages
@@ -96,9 +93,6 @@ app.post("/api/send-sms-otp", async (req, res) => {
           console.error("Error sending SMS:", error);
           res.status(500).json({ error: "Failed to send OTP via SMS" });
         });
-    } else {
-      res.status(404).json({ error: "User not found" });
-    }
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
