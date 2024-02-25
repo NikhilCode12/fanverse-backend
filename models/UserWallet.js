@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import UserAuth from "./UserAuth.js";
+import UserAccount from "./UserAccount.js";
 
 const userWalletSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "UserAuth" },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "UserAccount" },
   currentBalance: { type: Number, default: 0 },
   amountUnutilized: { type: Number, default: 0 },
   winnings: { type: Number, default: 0 },

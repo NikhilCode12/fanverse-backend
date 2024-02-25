@@ -5,6 +5,7 @@ export const createUserWallet = async (req, res) => {
   try {
     const userWallet = await UserWallet.create(req.body);
     await userWallet.save();
+
     return res.status(201).json(userWallet);
   } catch (err) {
     return res.status(500).json({ error: err.message });
