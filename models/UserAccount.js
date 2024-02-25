@@ -42,10 +42,8 @@ const UserAccountSchema = new mongoose.Schema({
       ref: "Team",
     },
   ],
-  primaryInfo: {
     mobile: { type: String, unique: true },
     email: { type: String, unique: true },
-  },
   basicInfo: {
     dob: { type: String, default: "DD/MM/YY" },
     gender: { type: String, default: "Unknown" },

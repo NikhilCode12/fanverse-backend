@@ -6,12 +6,44 @@ const secretKey = "eiy28whd78t";
 // creating a new user
 export const createUser = async (req, res) => {
   try {
-    const { username, primaryInfo } = req.body;
-    const { email, mobile } = primaryInfo;
-
-    const existingUser = await UserAccount.findOne({ email, mobile });
+    const { username, email, mobile } = req.body;
+    let existingUser = await UserAccount.findOne({ email });
     if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
+    {
+         const token = jwt.sign(
+      {
+        userId: existingUser._id,
+        email: existingUser.email,
+        mobile: existingUser.mobile,
+      },
+      secretKey,
+      {
+        expiresIn: "1d",
+      }
+    );
+      return res
+      .status(201)
+      .json({ msg: "User Already Registered", existingUser, token });
+    }
+     existingUser = await UserAccount.findOne({ mobile });
+     if (existingUser)
+    {
+         const token = jwt.sign(
+      {
+        userId: existingUser._id,
+        email: existingUser.email,
+        mobile: existingUser.mobile,
+      },
+      secretKey,
+      {
+        expiresIn: "1d",
+      }
+    );
+      return res
+      .status(201)
+      .json({ msg: "User Already Registered", existingUser, token });
+    } 
+      // return res.status(400).json({ message: "User already exists" });
 
     const newUser = new UserAccount(req.body);
 
@@ -21,15 +53,14 @@ export const createUser = async (req, res) => {
     const token = jwt.sign(
       {
         userId: newUser._id,
-        email: newUser.primaryInfo.email,
-        mobile: newUser.primaryInfo.mobile,
+        email: newUser.email,
+        mobile: newUser.mobile,
       },
       secretKey,
       {
         expiresIn: "1d",
       }
     );
-
     return res
       .status(201)
       .json({ msg: "User created successfully", newUser, token });
