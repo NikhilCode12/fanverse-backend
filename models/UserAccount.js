@@ -10,6 +10,7 @@ const UserAccountSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   contestsWon: {
     type: Number,
@@ -42,8 +43,8 @@ const UserAccountSchema = new mongoose.Schema({
       ref: "Team",
     },
   ],
-    mobile: { type: String, unique: true },
-    email: { type: String, unique: true },
+  mobile: { type: String, unique: true },
+  email: { type: String, unique: true },
   basicInfo: {
     dob: { type: String, default: "DD/MM/YY" },
     gender: { type: String, default: "Unknown" },
