@@ -61,7 +61,7 @@ const UserAccountSchema = new mongoose.Schema({
   currentBalance: { type: Number, default: 0 },
   amountUnutilized: { type: Number, default: 0 },
   winnings: { type: Number, default: 0 },
-  discountBonus: { type: Number, default: 0 },
+  discountBonus: { type: Number, default: 25 },
   transactions: [
     {
       id: { type: mongoose.Schema.Types.ObjectId },
