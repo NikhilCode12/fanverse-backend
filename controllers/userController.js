@@ -1,17 +1,19 @@
 import UserAccount from "../models/UserAccount.js";
 import jwt from "jsonwebtoken";
-
+import {nanoid} from "nanoid";
 const secretKey = "eiy28whd78t";
 
 // creating a new user
 export const createUser = async (req, res) => {
   try {
-    const { username, email, mobile } = req.body;
-    let existingUser = await UserAccount.findOne({ email });
+    const {  email, mobile } = req.body;
+    const ReceivedEmail = email;
+    const ReceivedMobile = mobile;
+    const existingUser = ReceivedEmail==""?await UserAccount.findOne({ mobile }):await UserAccount.findOne({ email });
     if (existingUser)
     {
-         const token = jwt.sign(
-      {
+      const token = jwt.sign(
+        {
         userId: existingUser._id,
         email: existingUser.email,
         mobile: existingUser.mobile,
@@ -25,28 +27,16 @@ export const createUser = async (req, res) => {
       .status(201)
       .json({ msg: "User Already Registered", existingUser, token });
     }
-     existingUser = await UserAccount.findOne({ mobile });
-     if (existingUser)
-    {
-         const token = jwt.sign(
-      {
-        userId: existingUser._id,
-        email: existingUser.email,
-        mobile: existingUser.mobile,
-      },
-      secretKey,
-      {
-        expiresIn: "1d",
-      }
-    );
-      return res
-      .status(201)
-      .json({ msg: "User Already Registered", existingUser, token });
-    } 
-      // return res.status(400).json({ message: "User already exists" });
-
-    const newUser = new UserAccount(req.body);
-
+    // if the user is not registered prevoiusly then only it will get registered and the code below will run
+    const username = nanoid(10);
+    const emailId = email==="" ? nanoid(10) : email; 
+    const mobileId = mobile==="" ? nanoid(10) : mobile;
+    const newUser = new UserAccount({  
+    username:username,
+    email: emailId,
+    mobile: mobileId,
+    });
+    
     await newUser.save();
 
     // generating token
