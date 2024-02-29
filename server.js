@@ -11,7 +11,7 @@ import userWalletRoutes from "./routes/userWalletRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
 import contestRoutes from "./routes/contestRoutes.js";
 import playerRoutes from "./routes/playerRoutes.js";
-import UserAccount from "./models/UserAccount.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 // express app
 const app = express();
@@ -45,6 +45,7 @@ app.use(cors());
 app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
 
 // Routes Middleware
+app.use("/api/payments", paymentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userAccountRoutes);
 app.use("/api/wallet", userWalletRoutes);
