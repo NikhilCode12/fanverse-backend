@@ -1,6 +1,7 @@
 import UserAccount from "../models/UserAccount.js";
 import jwt from "jsonwebtoken";
 import {nanoid} from "nanoid";
+import mongoose from "mongoose";
 const secretKey = "eiy28whd78t";
 
 // creating a new user
@@ -31,10 +32,14 @@ export const createUser = async (req, res) => {
     const username = nanoid(10);
     const emailId = email==="" ? nanoid(10) : email; 
     const mobileId = mobile==="" ? nanoid(10) : mobile;
+    const emailVerified = email===""?false:true;
+    const mobileVerified = mobile===""?false:true;
     const newUser = new UserAccount({  
     username:username,
     email: emailId,
     mobile: mobileId,
+    emailVerified,
+    mobileVerified,
     });
     
     await newUser.save();
@@ -103,6 +108,28 @@ export const getAllUsers = async (req, res) => {
 // update user by id
 export const updateUserById = async (req, res) => {
   try {
+    const{username,email,mobile}=req.body;
+    if(username)
+    {
+      const existingUser = await UserAccount.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Username already exists. Choose a different one.' });
+      }
+    }
+    if(email)
+    {
+        const existingUser = await UserAccount.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ error: 'email already exists. Choose a different one.' });
+      }
+    }
+    if(mobile)
+    {
+        const existingUser = await UserAccount.findOne({ mobile });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Mobile no. already exists. Choose a different one.' });
+      }
+    }
     const updatedUser = await UserAccount.findByIdAndUpdate(
       req.params.id,
       req.body,

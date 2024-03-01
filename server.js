@@ -12,6 +12,10 @@ import matchRoutes from "./routes/matchRoutes.js";
 import Match from "./models/Match.js";
 import contestRoutes from "./routes/contestRoutes.js";
 import playerRoutes from "./routes/playerRoutes.js";
+import UserAccount from "./models/UserAccount.js";
+import SevenPlusFourRoutes from "./routes/SevenPlusFourRoutes.js";
+import TenPlusOneRoutes from './routes/TenPlusOneRoutes.js';
+import FantasticFiveRoutes from './routes/FantasticFiveRoutes.js';
 import paymentRoutes from "./routes/paymentRoutes.js";
 
 // express app
@@ -54,7 +58,9 @@ app.use("/api/wallet", userWalletRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/contest", contestRoutes);
 app.use("/api/player", playerRoutes);
-
+app.use("/api/sevenplusfour",SevenPlusFourRoutes);
+app.use("/api/tenplusone",TenPlusOneRoutes);
+app.use("/api/fantasticfive",FantasticFiveRoutes);
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the server");
