@@ -79,10 +79,7 @@ app.get("/api/squads", async (req, res) => {
     }
 
     // Check if squads are already cached in the database
-    const cachedSquads = await Squads.findOne({
-      competitionId: competitionId,
-      matchId: matchId,
-    });
+    const cachedSquads = await Squads.findOne({ matchId });
 
     if (cachedSquads) {
       return res.json(cachedSquads);
