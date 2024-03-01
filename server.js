@@ -118,7 +118,7 @@ app.get("/api/matches/all", async (req, res) => {
 
     // Fetch data from entity sports api
     const response = await fetch(
-      `https://rest.entitysport.com/v2/matches/?status=1&token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=100&timezone=+5:30`
+      `https://rest.entitysport.com/v2/matches/?status=1&token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&timezone=+5:30`
     );
 
     const data = await response.json();
@@ -129,6 +129,26 @@ app.get("/api/matches/all", async (req, res) => {
     return res.json(data.response.items);
   } catch (error) {
     console.error("Error fetching and caching data: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// route to delete a expired match from db
+app.delete("/api/matches/delete-expired", async (req, res) => {
+  try {
+    const { competitionId, matchId } = req.query;
+
+    const match = await Match.findOne({ matchId });
+    if (!match) {
+      return res.status(404).json({ error: "Match not found" });
+    }
+
+    // Delete match from db
+    await match.delete();
+
+    return res.json({ msg: "Match deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting expired matches: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
