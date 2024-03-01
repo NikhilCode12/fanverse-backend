@@ -9,14 +9,18 @@ import authRoutes from "./routes/authRoutes.js";
 import userAccountRoutes from "./routes/userAccountRoutes.js";
 import userWalletRoutes from "./routes/userWalletRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
+import Match from "./models/Match.js";
 import contestRoutes from "./routes/contestRoutes.js";
 import playerRoutes from "./routes/playerRoutes.js";
 import UserAccount from "./models/UserAccount.js";
 import SevenPlusFourRoutes from "./routes/SevenPlusFourRoutes.js";
 import TenPlusOneRoutes from './routes/TenPlusOneRoutes.js';
 import FantasticFiveRoutes from './routes/FantasticFiveRoutes.js';
+import paymentRoutes from "./routes/paymentRoutes.js";
+
 // express app
 const app = express();
+const token = process.env.ENTITYSPORTS_API_TOKEN;
 
 // dotenv configuration
 dotenv.config();
@@ -47,6 +51,7 @@ app.use(cors());
 app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
 
 // Routes Middleware
+app.use("/api/payments", paymentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userAccountRoutes);
 app.use("/api/wallet", userWalletRoutes);
@@ -59,6 +64,32 @@ app.use("/api/fantasticfive",FantasticFiveRoutes);
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the server");
+});
+
+// matches route to get matches list from Entity sporst and then cache it in our db matches
+app.get("/api/matches/all", async (req, res) => {
+  try {
+    const cachedMatches = await Match.find();
+
+    if (cachedMatches.length > 0) {
+      return res.json(cachedMatches);
+    }
+
+    // Fetch data from entity sports api
+    const response = await fetch(
+      `https://rest.entitysport.com/v2/matches/?status=2&token=${token}&per_page=50`
+    );
+
+    const data = await response.json();
+
+    // caching this data on mongodb
+    await Match.insertMany(data.response.items);
+
+    return res.json(data.response.items);
+  } catch (error) {
+    console.error("Error fetching and caching data: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // MongoDB connection
@@ -112,11 +143,11 @@ app.post("/api/send-email-otp", async (req, res) => {
 
     const mailOptions = {
       from: {
-        name: "Fanverse",
+        name: "Fannverse",
         address: process.env.GMAIL,
       },
       to: email,
-      subject: "Fanverse OTP Verification Code",
+      subject: "Fannverse OTP Verification Code",
       html: `
       <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
@@ -137,7 +168,7 @@ app.post("/api/send-email-otp", async (req, res) => {
     `,
     };
 
-    await transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log("Error sending email", error);
         res.status(500).json({ error: "Failed to send OTP via email" });

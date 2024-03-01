@@ -20,6 +20,7 @@
     "mongoose": "^8.2.0",
     "nanoid": "^5.0.6",
     "nodemailer": "^6.9.10",
+    "stripe": "^14.19.0",
     "twilio": "^4.22.0",
     "util": "^0.12.5"
   }
