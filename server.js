@@ -14,9 +14,10 @@ import contestRoutes from "./routes/contestRoutes.js";
 import playerRoutes from "./routes/playerRoutes.js";
 import UserAccount from "./models/UserAccount.js";
 import SevenPlusFourRoutes from "./routes/SevenPlusFourRoutes.js";
-import TenPlusOneRoutes from './routes/TenPlusOneRoutes.js';
-import FantasticFiveRoutes from './routes/FantasticFiveRoutes.js';
+import TenPlusOneRoutes from "./routes/TenPlusOneRoutes.js";
+import FantasticFiveRoutes from "./routes/FantasticFiveRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import Squads from "./models/Squads.js";
 
 // express app
 const app = express();
@@ -58,12 +59,55 @@ app.use("/api/wallet", userWalletRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/contest", contestRoutes);
 app.use("/api/player", playerRoutes);
-app.use("/api/sevenplusfour",SevenPlusFourRoutes);
-app.use("/api/tenplusone",TenPlusOneRoutes);
-app.use("/api/fantasticfive",FantasticFiveRoutes);
+app.use("/api/sevenplusfour", SevenPlusFourRoutes);
+app.use("/api/tenplusone", TenPlusOneRoutes);
+app.use("/api/fantasticfive", FantasticFiveRoutes);
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the server");
+});
+
+// squads route to get player squads list from API and then cache them in our database
+app.get("/api/squads", async (req, res) => {
+  try {
+    const { competitionId, matchId } = req.query;
+
+    if (!competitionId || !matchId) {
+      return res.status(400).json({
+        error: "Competition ID and Match ID are required to get squads",
+      });
+    }
+
+    // Check if squads are already cached in the database
+    const cachedSquads = await Squads.findOne({
+      competitionId: competitionId,
+      matchId: matchId,
+    });
+
+    if (cachedSquads) {
+      return res.json(cachedSquads);
+    }
+
+    // If squads are not cached, fetch them from the API
+    const response = await fetch(
+      `https://rest.entitysport.com/v2/competitions/${competitionId}/squads/${matchId}?token=9b2e91bc61fd2a2e0af29a5ecba16642`
+    );
+
+    const data = await response.json();
+
+    // Cache squads in the database
+    const squads = new Squads({
+      competitionId: competitionId,
+      matchId: matchId,
+      squads: data.response.squads,
+    });
+    await squads.save();
+
+    return res.json(data);
+  } catch (error) {
+    console.error("Error fetching and caching data: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // matches route to get matches list from Entity sporst and then cache it in our db matches
@@ -77,7 +121,7 @@ app.get("/api/matches/all", async (req, res) => {
 
     // Fetch data from entity sports api
     const response = await fetch(
-      `https://rest.entitysport.com/v2/matches/?status=1&token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&timezone=+5:30`
+      `https://rest.entitysport.com/v2/matches/?status=1&token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=100&timezone=+5:30`
     );
 
     const data = await response.json();
