@@ -71,7 +71,7 @@ app.get("/api/matches/all", async (req, res) => {
 
     // Fetch data from entity sports api
     const response = await fetch(
-      `https://rest.entitysport.com/v2/matches/?status=3&token=${token}&per_page=10`
+      `https://rest.entitysport.com/v2/matches/?status=1&token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&timezone=+5:30`
     );
 
     const data = await response.json();
