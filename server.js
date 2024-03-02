@@ -67,6 +67,32 @@ app.get("/", (req, res) => {
   res.send("Welcome to the server");
 });
 
+// Route to find a user by username and email
+app.get("/api/find-user", async (req, res) => {
+  try {
+    const { username, email } = req.query;
+
+    if (!username && !email) {
+      return res
+        .status(400)
+        .json({ error: "Username or email is required to find a user" });
+    }
+
+    // Find user by username or email
+    const user = await UserAccount.findOne({ $or: [{ username }, { email }] });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Return the found user
+    res.json(user);
+  } catch (error) {
+    console.error("Error finding user:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // squads route to get player squads list from API and then cache them in our database
 app.get("/api/squads", async (req, res) => {
   try {
