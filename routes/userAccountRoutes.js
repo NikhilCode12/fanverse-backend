@@ -6,12 +6,12 @@ import {
   getAllUsers,
   updateUserById,
   deleteUserById,
-  findUserByEmailAndRegister
+  findUserAndRegister
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.post('/findAndCreate',findUserByEmailAndRegister);
+router.post('/findAndCreate',findUserAndRegister);
 router.post("/create", createUser);
 router.get("/", getUserByToken);
 router.get("/all", getAllUsers);
