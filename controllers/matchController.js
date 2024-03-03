@@ -36,12 +36,11 @@ export const getMatchById = async (req, res) => {
 // update a match by id
 export const updateMatchById = async (req, res) => {
   try {
-    const matchId = req.params.id;
-    const match = await Match.findByIdAndUpdate(matchId, req.body, {
-      new: true,
-    });
+    const { matchId } = req.params;
+    const { isExpired } = req.body;
+    const match = await Match.findByIdAndUpdate(matchId, { isExpired });
     if (!match) return res.status(404).json({ error: "Match not found" });
-    return res.status(200).json(match);
+    return res.status(200).json(match, {msg: "Match Expiration Updated Successfully!"});
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

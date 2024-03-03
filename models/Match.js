@@ -83,6 +83,7 @@ const matchSchema = new mongoose.Schema({
     winner: { type: Number },
     decision: { type: Number },
   },
+  isExpired: { type: Boolean, default: false },
 });
 
 const Match = mongoose.model("Match", matchSchema);
