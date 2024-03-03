@@ -162,6 +162,23 @@ app.get("/api/competitions/all", async (req, res) => {
 
     await Competition.insertMany(data);
 
+    // get the data of matches for each competition cid from the entity sports api and then cache it in our db matches
+    for (let i = 0; i < data.length; i++) {
+      const cachedMatches = await Match.find({ cid: data[i].cid });
+
+      if (cachedMatches.length > 0) {
+        continue;
+      }
+
+      const response = await fetch(
+        `https://rest.entitysport.com/v2/competitions/${data[i].cid}/matches?token=9b2e91bc61fd2a2e0af29a5ecba16642`
+      );
+
+      const matchesData = await response.json();
+
+      await Match.insertMany(matchesData.response.items);
+    }
+
     return res.json(data);
   } catch (error) {
     console.error("Error fetching data: ", error);
