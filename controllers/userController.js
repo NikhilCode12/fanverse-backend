@@ -155,3 +155,30 @@ export const deleteUserById = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
+
+// get a username or email
+export const findUserByEmailAndRegister = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const username = req.body.username;
+    const user = await UserAccount.findOne({email});
+    if (user)
+      return res.status(400).json({ msg: "User Already registered" });
+    else{
+      const user = await UserAccount.findOne({username});
+      if(user)
+      {
+        return res.status(401).json({ msg: "Username Already Taken" });
+      }
+      else{
+        const mobile = nanoid(10);
+        const newUser = new UserAccount({username:username,email:email,emailVerified:true,mobile});
+        await newUser.save();
+        return res.status(200).json({msg:"Sucessfully Registered",newUser});
+      }
+    }
+    // return res.status(200).json(userWallet);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};

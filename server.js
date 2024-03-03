@@ -18,7 +18,6 @@ import TenPlusOneRoutes from "./routes/TenPlusOneRoutes.js";
 import FantasticFiveRoutes from "./routes/FantasticFiveRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import Squads from "./models/Squads.js";
-
 // express app
 const app = express();
 const token = process.env.ENTITYSPORTS_API_TOKEN;
