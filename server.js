@@ -144,16 +144,25 @@ app.get("/api/competitions/all", async (req, res) => {
       return res.json(cachedCompetitions);
     }
 
-    const response = await fetch(
+    const response1 = await fetch(
+      `https://rest.entitysport.com/v2/competitions?token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&status=live
+      `
+    );
+
+    const response2 = await fetch(
       `https://rest.entitysport.com/v2/competitions?token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&status=fixture
       `
     );
 
-    const data = await response.json();
+    // merge both the responses
 
-    await Competition.insertMany(data.response.items);
+    const data1 = await response1.json();
+    const data2 = await response2.json();
+    const data = data1.response.items.concat(data2.response.items);
 
-    return res.json(data.response.items);
+    await Competition.insertMany(data);
+
+    return res.json(data);
   } catch (error) {
     console.error("Error fetching data: ", error);
     res.status(500).json({ error: "Internal server error" });
