@@ -18,6 +18,8 @@ import TenPlusOneRoutes from "./routes/TenPlusOneRoutes.js";
 import FantasticFiveRoutes from "./routes/FantasticFiveRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import Squads from "./models/Squads.js";
+import Competition from "./models/Competitions.js";
+
 // express app
 const app = express();
 const token = process.env.ENTITYSPORTS_API_TOKEN;
@@ -128,6 +130,32 @@ app.get("/api/squads", async (req, res) => {
     return res.json(data);
   } catch (error) {
     console.error("Error fetching and caching data: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// competition route to get all the competitions list which are under our subscription
+app.get("/api/competitions/all", async (req, res) => {
+  try {
+    // caching this data on mongodb
+    const cachedCompetitions = await Competition.find();
+
+    if (cachedCompetitions.length > 0) {
+      return res.json(cachedCompetitions);
+    }
+
+    const response = await fetch(
+      `https://rest.entitysport.com/v2/competitions?token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&status=fixture
+      `
+    );
+
+    const data = await response.json();
+
+    await Competition.insertMany(data.response.items);
+
+    return res.json(data.response.items);
+  } catch (error) {
+    console.error("Error fetching data: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
