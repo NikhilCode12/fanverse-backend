@@ -163,8 +163,13 @@ export const findUserAndRegister = async (req, res) => {
     const username = req.body.username;
     const mobile = req.body.mobile;
     const user = await UserAccount.findOne({email});
+    const user2 = await UserAccount.findOne({mobile});
     if (user)
       return res.status(400).json({ msg: "User Already registered" });
+    else if(user2)
+    {
+      return res.status(400).json({ msg: "User Already registered through same mobile" });
+    }
     else{
       const user = await UserAccount.findOne({username});
       if(user)
