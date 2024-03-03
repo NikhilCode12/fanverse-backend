@@ -157,10 +157,11 @@ export const deleteUserById = async (req, res) => {
 };
 
 // get a username or email
-export const findUserByEmailAndRegister = async (req, res) => {
+export const findUserAndRegister = async (req, res) => {
   try {
     const email = req.body.email;
     const username = req.body.username;
+    const mobile = req.body.mobile;
     const user = await UserAccount.findOne({email});
     if (user)
       return res.status(400).json({ msg: "User Already registered" });
@@ -171,8 +172,8 @@ export const findUserByEmailAndRegister = async (req, res) => {
         return res.status(401).json({ msg: "Username Already Taken" });
       }
       else{
-        const mobile = nanoid(10);
-        const newUser = new UserAccount({username:username,email:email,emailVerified:true,mobile});
+
+        const newUser = new UserAccount({username:username,email:email,emailVerified:true,mobile,mobileVerified:true});
         await newUser.save();
         return res.status(200).json({msg:"Sucessfully Registered",newUser});
       }
