@@ -19,7 +19,13 @@ import FantasticFiveRoutes from "./routes/FantasticFiveRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import Squads from "./models/Squads.js";
 import Competition from "./models/Competitions.js";
-
+import OneToThreeRoutes from "./routes/BallByBall/OneToThreeRoutes.js";
+import FourToSixRoutes from "./routes/BallByBall/FourToSixRoutes.js";
+import SevenToNineRoutes from "./routes/BallByBall/SevenToNineRoutes.js";
+import TenToTwelveRoutes from "./routes/BallByBall/TenToTwelveRoutes.js";
+import ThirteenToFifteenRoutes from "./routes/BallByBall/ThirteenToFifteenRoutes.js";
+import SixteenToEighteenRoutes from "./routes/BallByBall/SixteenToEighteenRoutes.js";
+import NineteenToTwentyRoutes from "./routes/BallByBall/NineteenToTwentyRoutes.js";
 // express app
 const app = express();
 const token = process.env.ENTITYSPORTS_API_TOKEN;
@@ -63,6 +69,13 @@ app.use("/api/player", playerRoutes);
 app.use("/api/sevenplusfour", SevenPlusFourRoutes);
 app.use("/api/tenplusone", TenPlusOneRoutes);
 app.use("/api/fantasticfive", FantasticFiveRoutes);
+app.use("/api/ballbyball/onetothree",OneToThreeRoutes);
+app.use("/api/ballbyball/fourtosix",FourToSixRoutes);
+app.use("/api/ballbyball/seventonine",SevenToNineRoutes);
+app.use("/api/ballbyball/tentotwelve",TenToTwelveRoutes);
+app.use("/api/ballbyball/thirteentofifteen",ThirteenToFifteenRoutes);
+app.use("/api/ballbyball/sixteentoeighteen",SixteenToEighteenRoutes);
+app.use("/api/ballbyball/nineteentotwenty",NineteenToTwentyRoutes);
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the server");
