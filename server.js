@@ -68,6 +68,89 @@ app.get("/", (req, res) => {
   res.send("Welcome to the server");
 });
 
+// calling the entity sports api periodically to get live match ball
+// by ball updates and then cache it in our db for all users to see
+let cachedLiveMatchData = null;
+
+const liveMatchSchema = new mongoose.Schema({
+  match_id: {
+    type: Number,
+    required: true,
+  },
+  data: {
+    type: Object,
+  },
+});
+
+const LiveMatch = mongoose.model("LiveMatch", liveMatchSchema);
+
+// Fetch live match data from Entity Sports API
+const fetchLiveMatchData = async (matchId) => {
+  try {
+    const response = await fetch(
+      `https://rest.entitysport.com/v2/matches/${matchId}/live?token=9b2e91bc61fd2a2e0af29a5ecba16642`
+    );
+    const data = await response.json();
+
+    // Cache live match data in our db
+    const liveMatch = new LiveMatch({
+      match_id: data.response.match_id,
+      data: data.response,
+    });
+
+    await liveMatch.save();
+
+    await liveMatch.updateOne({
+      match_id: data.response.match_id,
+      data: data.response,
+    });
+
+    console.log("Live match data cached successfully");
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching live match data: ", error);
+  }
+};
+
+// fetch live match data initially and then cache it in our db
+const cacheLiveMatchData = async (matchId) => {
+  try {
+    const liveMatchData = await fetchLiveMatchData(matchId);
+
+    cachedLiveMatchData = liveMatchData;
+  } catch (error) {
+    console.error("Error caching live match data: ", error);
+  }
+};
+
+// periodically fetch live match data from entity sports api and cache it in our db
+setInterval(() => {
+  if (cachedLiveMatchData) {
+    cacheLiveMatchData(cachedLiveMatchData.matchId);
+  }
+}, 5000);
+
+// end point to serve cached live match data
+app.get("/api/live-match", async (req, res) => {
+  try {
+    // fetch live match data from our db
+    const matchId = req.query.matchId;
+    const liveMatch = await LiveMatch.findOne().sort({ _id: -1 }).exec();
+
+    if (!liveMatch) {
+      cacheLiveMatchData(matchId);
+      return res.status(404).json({ error: "Live match data not found" });
+    }
+
+    // Return the cached live match data
+    res.json(liveMatch.data);
+  } catch (error) {
+    console.error("Error serving live match data: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // Route to find a user by username and email
 app.get("/api/find-user", async (req, res) => {
   try {
