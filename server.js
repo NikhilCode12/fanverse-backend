@@ -69,13 +69,13 @@ app.use("/api/player", playerRoutes);
 app.use("/api/sevenplusfour", SevenPlusFourRoutes);
 app.use("/api/tenplusone", TenPlusOneRoutes);
 app.use("/api/fantasticfive", FantasticFiveRoutes);
-app.use("/api/ballbyball/onetothree",OneToThreeRoutes);
-app.use("/api/ballbyball/fourtosix",FourToSixRoutes);
-app.use("/api/ballbyball/seventonine",SevenToNineRoutes);
-app.use("/api/ballbyball/tentotwelve",TenToTwelveRoutes);
-app.use("/api/ballbyball/thirteentofifteen",ThirteenToFifteenRoutes);
-app.use("/api/ballbyball/sixteentoeighteen",SixteenToEighteenRoutes);
-app.use("/api/ballbyball/nineteentotwenty",NineteenToTwentyRoutes);
+app.use("/api/ballbyball/onetothree", OneToThreeRoutes);
+app.use("/api/ballbyball/fourtosix", FourToSixRoutes);
+app.use("/api/ballbyball/seventonine", SevenToNineRoutes);
+app.use("/api/ballbyball/tentotwelve", TenToTwelveRoutes);
+app.use("/api/ballbyball/thirteentofifteen", ThirteenToFifteenRoutes);
+app.use("/api/ballbyball/sixteentoeighteen", SixteenToEighteenRoutes);
+app.use("/api/ballbyball/nineteentotwenty", NineteenToTwentyRoutes);
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the server");
@@ -107,14 +107,14 @@ const fetchLiveMatchData = async (matchId) => {
 
     // Cache live match data in our db
     const liveMatch = new LiveMatch({
-      match_id: data.response.match_id,
+      match_id: matchId, // Use matchId parameter here
       data: data.response,
     });
 
     await liveMatch.save();
 
     await liveMatch.updateOne({
-      match_id: data.response.match_id,
+      match_id: matchId, // Use matchId parameter here
       data: data.response,
     });
 
@@ -145,10 +145,10 @@ setInterval(() => {
 }, 5000);
 
 // end point to serve cached live match data
-app.get("/api/live-match", async (req, res) => {
+app.get("/api/live-match/", async (req, res) => {
   try {
     // fetch live match data from our db
-    const matchId = req.query.matchId;
+    const { matchId } = req.query;
     const liveMatch = await LiveMatch.findOne().sort({ _id: -1 }).exec();
 
     if (!liveMatch) {
