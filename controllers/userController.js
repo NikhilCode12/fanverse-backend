@@ -191,7 +191,7 @@ export const findUserAndRegister = async (req, res) => {
 
 // update user contests..
 export const joinContest = async (req, res) => {
-  const { id, matchId } = req.body;
+  const { id, contestId } = req.body;
 
   try {
  
@@ -202,12 +202,12 @@ export const joinContest = async (req, res) => {
     }
 
     // Check if the matchId already exists in the contests array
-    if (user.contests.includes(matchId)) {
+    if (user.contests.includes(contestId)) {
       return res.status(400).json({ error: 'User already joined this contest' });
     }
     
     // Push the matchId into the contests array
-    user.contests.push(matchId);
+    user.contests.push(contestId);
 
     // Save the updated user object
     await user.save();
