@@ -12,7 +12,7 @@ import {
 
 const router = express.Router();
 
-router.get("/getall",getAllMatchContest);
+router.post("/getall",getAllMatchContest);
 router.post("/create", createContest);
 router.get("/all", getAllContests);
 router.get("/:id", getContestById);
