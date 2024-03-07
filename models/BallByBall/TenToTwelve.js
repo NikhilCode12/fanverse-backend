@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const TenToTwelveSchema = new mongoose.Schema({
+       matchId:{type:Number,required:true},
       MegaPrize:{type:Number},
             PrizePool:{type:String,required:true},
             EntryFees:{type:Number,required:true},
