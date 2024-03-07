@@ -6,11 +6,13 @@ import {
   getAllUsers,
   updateUserById,
   deleteUserById,
-  findUserAndRegister
+  findUserAndRegister,
+  joinContest
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
+router.post("/joincontest", joinContest);
 router.post('/findAndCreate',findUserAndRegister);
 router.post("/create", createUser);
 router.get("/", getUserByToken);
