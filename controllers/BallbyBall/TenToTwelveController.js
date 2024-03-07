@@ -10,7 +10,18 @@ export const createContest = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
-
+// getting all contest of a matchId
+export const getAllMatchContest = async (req, res) => {
+  try {
+       const contest = await TenToTwelve.find({matchId: req.body.matchId});
+    if (!contest) {
+      return res.status(404).json({ error: "Contests not found" });
+    }
+    return res.status(200).json(contest);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
 // getting contest by id
 export const getContestById = async (req, res) => {
   try {
