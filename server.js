@@ -149,15 +149,15 @@ app.get("/api/live-match/", async (req, res) => {
   try {
     // fetch live match data from our db
     const { matchId } = req.query;
-    const liveMatch = await LiveMatch.findOne().sort({ _id: -1 }).exec();
+    // const liveMatch = await LiveMatch.findOne().sort({ _id: -1 }).exec();
 
-    if (!liveMatch) {
-      cacheLiveMatchData(matchId);
-      return res.status(404).json({ error: "Live match data not found" });
-    }
+    // if (!liveMatch) {
+    //   cacheLiveMatchData(matchId);
+    //   return res.status(404).json({ error: "Live match data not found" });
+    // }
 
     // Return the cached live match data
-    res.json(liveMatch.data);
+    res.json(fetchLiveMatchData(matchId));
   } catch (error) {
     console.error("Error serving live match data: ", error);
     res.status(500).json({ error: "Internal server error" });
