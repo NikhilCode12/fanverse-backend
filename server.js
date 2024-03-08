@@ -26,6 +26,7 @@ import TenToTwelveRoutes from "./routes/BallByBall/TenToTwelveRoutes.js";
 import ThirteenToFifteenRoutes from "./routes/BallByBall/ThirteenToFifteenRoutes.js";
 import SixteenToEighteenRoutes from "./routes/BallByBall/SixteenToEighteenRoutes.js";
 import NineteenToTwentyRoutes from "./routes/BallByBall/NineteenToTwentyRoutes.js";
+import rankingUsers from "./models/RankingBBB.js";
 // express app
 const app = express();
 const token = process.env.ENTITYSPORTS_API_TOKEN;
@@ -79,6 +80,31 @@ app.use("/api/ballbyball/nineteentotwenty", NineteenToTwentyRoutes);
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the server");
+});
+
+// create ranking of user and also update their points
+app.post("/api/ranking", async (req, res) => {
+  const { username, points } = req.body;
+
+  try {
+    // Check if the user already exists
+    let user = await rankingUsers.findOne({ username });
+
+    if (!user) {
+      // If the user does not exist, create a new user
+      user = new rankingUsers({ username, points });
+      await user.save();
+      return res.status(201).json(user);
+    } else {
+      // If the user exists, update the points
+      user.points += points;
+      await user.save();
+      return res.status(200).json(user);
+    }
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // calling the entity sports api periodically to get live match ball
