@@ -83,7 +83,7 @@ app.get("/", (req, res) => {
 });
 
 // get all users from ranking users
-app.get("/api/ranking", async (req, res) => {
+app.get("/api/ranking/all", async (req, res) => {
   try {
     const users = await rankingUsers.find().sort({ points: -1 });
     return res.json(users);
