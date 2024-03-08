@@ -188,3 +188,37 @@ export const findUserAndRegister = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
+
+// update user contests..
+export const joinContest = async (req, res) => {
+  const { token, contestId } = req.body;
+
+  try {
+    // Verify the JWT token
+    const decoded = jwt.verify(token, secretKey); // Replace 'your-secret-key' with your actual secret key
+
+    const userId = decoded.userId;
+
+
+    const user = await UserAccount.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if the matchId already exists in the contests array
+    if (user.contests.includes(contestId)) {
+      return res.status(400).json({ error: 'User already joined this contest' });
+    }
+
+    // Push the matchId into the contests array
+    user.contests.push(contestId);
+
+    // Save the updated user object
+    await user.save();
+
+    return res.status(200).json({ message: 'User joined contest successfully' });
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
