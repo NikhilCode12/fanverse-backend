@@ -82,6 +82,17 @@ app.get("/", (req, res) => {
   res.send("Welcome to the server");
 });
 
+// get all users from ranking users
+app.get("/api/ranking", async (req, res) => {
+  try {
+    const users = await rankingUsers.find().sort({ points: -1 });
+    return res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // create ranking of user and also update their points
 app.post("/api/ranking", async (req, res) => {
   const { username, points } = req.body;
