@@ -81,9 +81,13 @@ const UserAccountSchema = new mongoose.Schema({
     userReference: { type: String },
     referCode: { type: String },
   },
-  usernameVerified:{ type:Boolean,default:false},
-  mobileVerified:{ type:Boolean,default:false},
-  emailVerified:{ type:Boolean,default:false},
+  usernameVerified: { type: Boolean, default: false },
+  mobileVerified: { type: Boolean, default: false },
+  emailVerified: { type: Boolean, default: false },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const UserAccount = mongoose.model("UserAccount", UserAccountSchema);
