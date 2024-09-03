@@ -141,7 +141,7 @@ app.get("/api/live-match/", async (req, res) => {
     const { matchId } = req.query;
 
     const response = await fetch(
-      `https://rest.entitysport.com/v2/matches/${matchId}/live?token=9b2e91bc61fd2a2e0af29a5ecba16642`
+      `https://rest.entitysport.com/sandbox/cricket/matches/${matchId}/live?token=c16eaec3abd49e3477yy567836a95ad43`
     );
     const data = await response.json();
 
@@ -211,7 +211,7 @@ app.get("/api/squads", async (req, res) => {
 
     // If squads are not cached, fetch them from the API
     const response = await fetch(
-      `https://rest.entitysport.com/v2/competitions/${competitionId}/squads/${matchId}?token=9b2e91bc61fd2a2e0af29a5ecba16642`
+      `https://rest.entitysport.com/sandbox/cricket/competitions/${competitionId}/squads/${matchId}?token=c16eaec3abd49e3477yy567836a95ad43`
     );
 
     const data = await response.json();
@@ -242,12 +242,12 @@ app.get("/api/competitions/all", async (req, res) => {
     }
 
     const response1 = await fetch(
-      `https://rest.entitysport.com/v2/competitions?token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&status=live
+      `https://rest.entitysport.com/sandbox/cricket/competitions?token=c16eaec3abd49e3477yy567836a95ad43&per_page=50&status=live
       `
     );
 
     const response2 = await fetch(
-      `https://rest.entitysport.com/v2/competitions?token=9b2e91bc61fd2a2e0af29a5ecba16642&per_page=50&status=fixture
+      `https://rest.entitysport.com/sandbox/cricket/competitions?token=c16eaec3abd49e3477yy567836a95ad43&per_page=50&status=fixture
       `
     );
 
@@ -268,7 +268,7 @@ app.get("/api/competitions/all", async (req, res) => {
       }
 
       const response = await fetch(
-        `https://rest.entitysport.com/v2/competitions/${data[i].cid}/matches?token=9b2e91bc61fd2a2e0af29a5ecba16642`
+        `https://rest.entitysport.com/sandbox/cricket/competitions/${data[i].cid}/matches?token=c16eaec3abd49e3477yy567836a95ad43`
       );
 
       const matchesData = await response.json();
@@ -295,7 +295,7 @@ app.get("/api/matches/", async (req, res) => {
 
     // Fetch data from entity sports api
     const response = await fetch(
-      `https://rest.entitysport.com/v2/competitions/${competitionId}/matches?token=9b2e91bc61fd2a2e0af29a5ecba16642`
+      `https://rest.entitysport.com/sandbox/cricket/competitions/${competitionId}/matches?token=c16eaec3abd49e3477yy567836a95ad43`
     );
 
     const data = await response.json();
